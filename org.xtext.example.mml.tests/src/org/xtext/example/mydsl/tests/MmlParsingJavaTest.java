@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
+import javax.sound.midi.MidiFileFormat;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.documentation.impl.MultiLineFileHeaderProvider;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipse.xtext.testing.util.ParseHelper;
@@ -14,7 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.xtext.example.mydsl.mml.CSVParsingConfiguration;
 import org.xtext.example.mydsl.mml.DataInput;
+import org.xtext.example.mydsl.mml.FrameworkLang;
+import org.xtext.example.mydsl.mml.MLAlgorithm;
 import org.xtext.example.mydsl.mml.MMLModel;
+import org.xtext.example.mydsl.mml.RFormula;
+import org.xtext.example.mydsl.mml.Validation;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
@@ -67,8 +74,25 @@ public class MmlParsingJavaTest {
 		pandasCode += "\nprint (mml_data)\n"; 
 		
 		Files.write(pandasCode.getBytes(), new File("mml.py"));
-		// end of Python generation
+		// end of Python generation for csv parsing
 		
+		FrameworkLang framework = result.getAlgorithm().getFramework();
+		
+		if(FrameworkLang.SCIKIT.equals(framework)) {
+			MLAlgorithm algo = result.getAlgorithm().getAlgorithm();
+			
+			//...
+			
+			RFormula formula = result.getFormula();
+			
+			//...
+			
+			Validation validation = result.getValidation();
+			
+			//...
+		}else {
+			//not yet supported
+		}
 		
 		/*
 		 * Calling generated Python script (basic solution through systems call)
