@@ -21,7 +21,15 @@ import org.xtext.example.mydsl.mml.FrameworkLang;
 import org.xtext.example.mydsl.mml.MLAlgorithm;
 import org.xtext.example.mydsl.mml.MMLModel;
 import org.xtext.example.mydsl.mml.RFormula;
+import org.xtext.example.mydsl.mml.StratificationMethod;
 import org.xtext.example.mydsl.mml.Validation;
+import org.xtext.example.mydsl.mml.impl.CrossValidationImpl;
+import org.xtext.example.mydsl.mml.impl.DTImpl;
+import org.xtext.example.mydsl.mml.impl.GTBImpl;
+import org.xtext.example.mydsl.mml.impl.RandomForestImpl;
+import org.xtext.example.mydsl.mml.impl.SGDImpl;
+import org.xtext.example.mydsl.mml.impl.SVRImpl;
+import org.xtext.example.mydsl.mml.impl.TrainingTestImpl;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
@@ -77,17 +85,48 @@ public class MmlParsingJavaTest {
 		// end of Python generation for csv parsing
 		
 		FrameworkLang framework = result.getAlgorithm().getFramework();
-		
 		if(FrameworkLang.SCIKIT.equals(framework)) {
+			String importAlgoFrom = "ensemble";
+			String algoCall = "";
 			MLAlgorithm algo = result.getAlgorithm().getAlgorithm();
+			if(algo instanceof DTImpl) {
+				importAlgoFrom="tree";
+				algoCall="DecisionTreeRegressor()";
+			}else if(algo instanceof GTBImpl) {
+				algoCall="GradientBoostingRegressor()";
+			}else if(algo instanceof RandomForestImpl) {
+				algoCall="RandomForestRegressor()";
+			}else if(algo instanceof SGDImpl) {
+				importAlgoFrom="linear_model";
+				algoCall="SGDRegressor()";
+			}else if(algo instanceof SVRImpl) {
+				importAlgoFrom="svm";
+				algoCall="SVR()";
+			}else {
+				//algo non reconnu
+			}
+			//... 
+			String algoImport = "from sklearn import "+importAlgoFrom;
+			String algoRes = "clf = "+importAlgoFrom+"."+algoCall;
 			
-			//...
-			
-			RFormula formula = result.getFormula();
-			
-			//...
+			RFormula formula = result.getFormula();			
+			//formula est optionnel, on l'ignore pour l'instant
 			
 			Validation validation = result.getValidation();
+			StratificationMethod strat = validation.getStratification();
+			
+			String importStratFrom = "";
+			
+			if(strat instanceof CrossValidationImpl) {
+				
+			}else if(strat instanceof TrainingTestImpl) {
+				
+			}else {
+				//stratification non reconnue
+			}
+			
+			String stratImport="from sklearn.model_selection import";
+			String stratRes= "";
 			
 			//...
 		}else {
