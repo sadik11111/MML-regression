@@ -12,4 +12,4 @@ Require-Bundle: org.xtext.example.mml,
  org.eclipse.xtext.xbase.testing,
  org.eclipse.xtext.xbase.lib;bundle-version="2.14.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.xtext.example.mydsl.tests;x-internal=true
+Export-Package: org.xtext.example.mydsl.tests.brian_trung;x-internal=true
