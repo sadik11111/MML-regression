@@ -61,7 +61,7 @@ public class MmlParsingJavaTest {
 		DataInput dataInput = result.getInput();
 		String fileLocation = dataInput.getFilelocation();
 
-		String pythonImport = "import pandas as pd\n";
+		/*String pythonImport = "import pandas as pd\n";
 		String DEFAULT_COLUMN_SEPARATOR = ","; // by default
 		String csv_separator = DEFAULT_COLUMN_SEPARATOR;
 		CSVParsingConfiguration parsingInstruction = dataInput.getParsingInstruction();
@@ -72,7 +72,7 @@ public class MmlParsingJavaTest {
 		String csvReading = "mml_data = pd.read_csv(" + mkValueInSingleQuote(fileLocation) + ", sep="
 				+ mkValueInSingleQuote(csv_separator) + ")\n";
 		String scikitImports = pythonImport;
-		String scikitProgram = csvReading;
+		String scikitProgram = csvReading;*/
 
 		//String pandasCode = pythonImport + csvReading;
 
@@ -103,7 +103,7 @@ public class MmlParsingJavaTest {
 				// algo non reconnu
 			}
 			// ...
-			scikitImports+= "from sklearn import " + importAlgoFrom+"\n";
+			//scikitImports+= "from sklearn import " + importAlgoFrom+"\n";
 			String algoRes = "clf = " + importAlgoFrom + "." + algoCall;
 
 			String split = "";
@@ -166,7 +166,7 @@ public class MmlParsingJavaTest {
 			}
 			// ...
 			
-			Files.write(scikitProgram.getBytes(), new File("mml.py"));
+			//Files.write(scikitProgram.getBytes(), new File("mml.py"));
 		} else {
 			// not yet supported
 		}
@@ -184,8 +184,5 @@ public class MmlParsingJavaTest {
 
 	}
 
-	private String mkValueInSingleQuote(String val) {
-		return "'" + val + "'";
-	}
 
 }
