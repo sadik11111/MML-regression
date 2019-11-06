@@ -70,12 +70,15 @@ public class MmlParsingJavaTest {
 			csv_separator = parsingInstruction.getSep().toString();
 		}
 		String csvReading = "mml_data = pd.read_csv(" + mkValueInSingleQuote(fileLocation) + ", sep="
-				+ mkValueInSingleQuote(csv_separator) + ")";
-		String pandasCode = pythonImport + csvReading;
+				+ mkValueInSingleQuote(csv_separator) + ")\n";
+		String scikitImports = pythonImport;
+		String scikitProgram = csvReading;
 
-		pandasCode += "\nprint (mml_data)\n";
+		//String pandasCode = pythonImport + csvReading;
 
-		Files.write(pandasCode.getBytes(), new File("mml.py"));
+		//pandasCode += "\nprint (mml_data)\n";
+
+		//Files.write(pandasCode.getBytes(), new File("mml.py"));
 		// end of Python generation for csv parsing
 
 		FrameworkLang framework = result.getAlgorithm().getFramework();
@@ -100,7 +103,7 @@ public class MmlParsingJavaTest {
 				// algo non reconnu
 			}
 			// ...
-			String algoImport = "from sklearn import " + importAlgoFrom;
+			scikitImports+= "from sklearn import " + importAlgoFrom+"\n";
 			String algoRes = "clf = " + importAlgoFrom + "." + algoCall;
 
 			String split = "";
@@ -125,38 +128,45 @@ public class MmlParsingJavaTest {
 
 			String importStratFrom = "";
 			String stratRes = "";
+			String stratFit = "";
 
 			if (strat instanceof CrossValidationImpl) {
 				importStratFrom = "cross_val_score";
 				int numRepCross = strat.getNumber();
-
-				stratRes += "cross_val_score(clf, X, Y, C=" + numRepCross + ")";
+				stratRes += "cross_val_score(clf, X, Y, C=" + numRepCross + ")\n";
 			} else if (strat instanceof TrainingTestImpl) {
 				importStratFrom = "train_test_split";
 				int percentage = strat.getNumber();
 				stratRes += "test_size = " + (100.0 - percentage) / 100 + "\n";
-				stratRes += "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)";
+				stratRes += "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)\n";
+				stratFit += "clf.fit(X_train, y_train)";
 			} else {
 				// stratification non reconnue
 			}
 
-			String stratImport = "from sklearn.model_selection import" + importStratFrom;
+			String stratImport = "from sklearn.model_selection import" + importStratFrom+"\n";
 			
 			String metricRes="";
+			String metricImport="from sklearn.metrics import ";
 			EList<ValidationMetric> metricList = validation.getMetric();
 			for(ValidationMetric metric : metricList) {
 				String metricName = metric.getName();
 				if(metricName == "MSE" || metricName == "mean_squared_error") {
-					metricRes += "" + "\n";
+					metricRes += "accuracy = mean_squared_error(y_test, clf.predict(X_test))" + "\n";
+					metricImport += "mean_squared_error\n";
 				}else if(metricName == "MAE" || metricName == "mean_absolute_error") {
-					metricRes += "" + "\n";
+					metricRes += "accuracy = mean_absolute_error(y_test, clf.predict(X_test))" + "\n";
+					metricImport += "mean_absolute_error\\n";
 				}else if(metricName == "MAPE" || metricName == "mean_absolute_percentage_error") {
-					metricRes += "" + "\n";
+					metricRes += "accuracy = mean_absolute_percentage_error(y_test, clf.predict(X_test))" + "\n";
+					metricImport += "mean_absolute_percentage_error\\n";
 				}else {
 					// metric non supportée
 				}
 			}
 			// ...
+			
+			Files.write(scikitProgram.getBytes(), new File("mml.py"));
 		} else {
 			// not yet supported
 		}
